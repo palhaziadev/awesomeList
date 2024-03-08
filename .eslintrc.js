@@ -14,9 +14,9 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
-  parserOptions: {
-    project: './tsconfig.json',
-  },
+  // parserOptions: {
+  //   project: './tsconfig.json',
+  // },
   plugins: ['react', 'react-hooks', 'react-native', '@typescript-eslint'],
   rules: {
     indent: ['error', 2, { SwitchCase: 1 }],
@@ -29,14 +29,11 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-return': 'off',
-    '@typescript-eslint/no-unsafe-call': 'off'
+    '@typescript-eslint/no-unsafe-call': 'off',
   },
   settings: {
-    "import/ignore": [
-      "react-native",
-		  "node_modules/react-native/index\\.js$"
-	  ]
-  }
+    'import/ignore': ['react-native', 'node_modules/react-native/index\\.js$'],
+  },
   // settings: {
   //   react: {
   //     version: 'detect',
