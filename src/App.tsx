@@ -1,41 +1,26 @@
-import { StyleSheet, Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { registerRootComponent } from 'expo';
+import HomeScreen from './screens/List/List';
+import ProfileScreen from './screens/Profile/Profile';
+import { AuthProvider } from './context/useAuthContext';
 
 const Stack = createNativeStackNavigator();
-
-const HomeScreen = ({ navigation }) => {
-  return (
-    <Button
-      title="Go to Jane's profile"
-      onPress={() => navigation.navigate('Profile', { name: 'Jane' })}
-    />
-  );
-};
-const ProfileScreen = ({ navigation, route }) => {
-  return (
-    <>
-      {/* <Text>This is {route.params.name}'s profile</Text> */}
-      <Button
-        title="Go to main"
-        onPress={() => navigation.navigate('Home', { name: 'Home' })}
-      />
-    </>
-  );
-};
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: 'Welcome' }}
-        />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-      </Stack.Navigator>
+      <AuthProvider>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ title: 'Welcome' }}
+          />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+        </Stack.Navigator>
+      </AuthProvider>
     </NavigationContainer>
   );
 }
