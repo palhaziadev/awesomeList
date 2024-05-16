@@ -8,6 +8,7 @@ export default function useGoogleLogin(handleLogin) {
     GoogleSignin.configure({
       webClientId:
         '203722623000-e1nuqqv0mo5dsd9ga0sofiojrafske9v.apps.googleusercontent.com',
+      forceCodeForRefreshToken: true,
     });
   }, []);
 

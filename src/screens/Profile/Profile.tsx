@@ -11,13 +11,14 @@ export default function ProfileScreen({ navigation }) {
 
   // Handle user state changes
   function onAuthStateChanged(user) {
-    // setUser(user);
+    setUser(user);
 
     console.log('aaa user changed', user);
 
     if (initializing) setInitializing(false);
   }
 
+  // TODO put this to hook
   useEffect(() => {
     getAuth();
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);

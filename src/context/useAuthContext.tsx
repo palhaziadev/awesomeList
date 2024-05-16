@@ -1,4 +1,12 @@
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface IUser {
   uid: string;
@@ -26,6 +34,16 @@ export function useAuthContext() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IUser | null>(null);
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+  }
+
+  useEffect(() => {
+    getAuth();
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

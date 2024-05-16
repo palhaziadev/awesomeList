@@ -1,77 +1,124 @@
 import { useEffect, useState } from 'react';
-import { Button, Text, View } from 'react-native';
-import { Todo, TodoRepository } from '../../TodoRepository';
-import useGoogleLogin from '../../services/AuthGoogle';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { useAuthContext } from '../../context/useAuthContext';
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { ListRepository } from '../../repository/ListRepository';
+import { List } from '../../model/List';
+import ListElement from '../../components/List/ListElement';
+import InputField from '../../components/InputField';
+import Button from '../../components/Button';
 
-export default function HomeScreen({ navigation }) {
-  const { user, setUser } = useAuthContext();
-  const repo = new TodoRepository();
-  const [todos, setTodos] = useState<Todo[]>([]);
+// TODO check database layer how it is recommended to do (next-practice)
 
-  const handleLogin = (user: FirebaseAuthTypes.User): void => {
-    console.log('aaa handle', user);
-    if (!user) return;
-    setUser({
-      uid: user.uid,
-      displayName: `${user.displayName}`,
-      email: `${user.email}`,
-      photoURL: `${user.photoURL}`,
+const defaultList = {
+  users: [],
+  createdAt: '',
+  createdBy: '',
+  listId: '0',
+  listName: '',
+};
+
+export default function ListScreen({ navigation }) {
+  const { user } = useAuthContext();
+  const repo = new ListRepository();
+  const [newList, setNewList] = useState<List>(defaultList);
+  const [loading, setLoading] = useState(true);
+  const [lists, setLists] = useState<List[]>([]);
+
+  //
+  // TODO create service
+
+  const addList = () => {
+    repo.create({
+      ...newList,
+      createdAt: new Date().toISOString(),
+      createdBy: `${user?.uid}`,
     });
+    setNewList(defaultList);
   };
 
-  const { googleSignIn, googleLogOut } = useGoogleLogin(handleLogin);
+  const removeList = (listId) => {
+    repo.delete(listId);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await repo.getAll();
-      // console.log('aaa', data);
-      setTodos(data);
-    };
-    fetchData();
+    const subscriber = firestore()
+      .collection('awesomeLists')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot((querySnapshot) => {
+        const lists: List[] = [];
+
+        querySnapshot.forEach((documentSnapshot) => {
+          lists.push({
+            ...(documentSnapshot.data() as List),
+            // TODO delete with docId or use added+generated id by me??
+            listId: documentSnapshot.id,
+            key: documentSnapshot.id,
+          });
+        });
+
+        setLists(lists);
+        setLoading(false);
+      });
+
+    return () => subscriber();
   }, []);
 
-  const logout = () => {
-    googleLogOut().then(() => {
-      setUser(null);
-      console.log('User signed out!');
-    });
-  };
+  if (loading) {
+    return <ActivityIndicator />;
+  }
 
   return (
-    <>
-      <View>
+    <View style={styles.container}>
+      <View style={styles.profileSection}>
         <Button
-          title="Profile"
+          text="Profile"
           onPress={() => navigation.navigate('Profile', { name: 'user name' })}
         />
-        {user ? <Button title="Logout" onPress={() => logout()} /> : null}
       </View>
-      <View>
-        {!user ? (
-          <Button
-            title="Google Sign-In"
-            onPress={() =>
-              googleSignIn().then(
-                ({ user }: FirebaseAuthTypes.UserCredential): void => {
-                  handleLogin(user);
-                }
-              )
-            }
-          />
-        ) : (
-          <Text>Logged In</Text>
+      <View style={styles.newSection}>
+        <InputField
+          style={styles.newSectionInput}
+          value={newList.listName}
+          palceholder="Enter list name"
+          onChangeText={(listName) => {
+            setNewList({ ...newList, listName: listName });
+          }}
+        ></InputField>
+        <Button text="Add List" onPress={() => addList()}></Button>
+      </View>
+      <FlatList
+        style={styles.list}
+        contentContainerStyle={{ gap: 10 }}
+        data={lists}
+        renderItem={({ item }) => (
+          <ListElement list={item} remove={removeList}></ListElement>
         )}
-      </View>
-      <View>
-        <>
-          <Text>{todos.length}</Text>
-          {todos.map((todo) => {
-            return <Text key={todo.id}>{todo.title}</Text>;
-          })}
-        </>
-      </View>
-    </>
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+  },
+  list: {
+    // margin: 10,
+  },
+  profileSection: {
+    height: 40,
+  },
+  newSection: {
+    marginTop: 10,
+    marginBottom: 10,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  newSectionInput: {
+    flex: 1,
+    width: 100,
+    marginRight: 10,
+  },
+});
