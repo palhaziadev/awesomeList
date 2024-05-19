@@ -28,17 +28,13 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": false,
-    "types": [
-      "react-native",
-      "jest"
-    ],
-    "module": "commonjs"
+    "types": ["react-native"],
+    "module": "NodeNext"
   },
   "exclude": [
     "node_modules",
     "babel.config.js",
     "metro.config.js",
-    "jest.config.js",
     "__tests__/**/*-test.ts"
   ],
   "extends": "expo/tsconfig.base"

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "AwesomeList",
-    "slug": "AwesomeList",
+    "slug": "awesomelist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,13 +11,18 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.palhaziadev.awesomelist",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +30,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "70d7bb5a-9662-46d8-8c87-d444480707f1"
+      }
+    },
+    "owner": "palhaziadev"
   }
 }
