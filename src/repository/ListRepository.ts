@@ -9,10 +9,16 @@ import {
   query,
 } from 'firebase/firestore';
 import { List } from '../model/List';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 
 export class ListRepository {
   private readonly collectionName = 'awesomeLists';
+
+  queryList(): FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> {
+    return firestore().collection('awesomeLists').orderBy('createdAt', 'desc');
+  }
 
   async delete(id: string): Promise<void> {
     console.log('aaa remove', id);
@@ -41,18 +47,6 @@ export class ListRepository {
   async getAll(): Promise<List[]> {
     const lists: List[] = [];
     try {
-      // const querySnapshot = await getDocs(collection(db, this.collectionName));
-      // const querySnapshot = await getDocs(
-      //   query(collection(db, this.collectionName), orderBy('listId', 'asc'))
-      // );
-      //     firestore()
-      // .collection('Users')
-      // // Order results
-      // .orderBy('age', 'desc')
-      // .get()
-      // .then(querySnapshot => {
-      //   /* ... */
-      // });
       const querySnapshot = await firestore()
         .collection(this.collectionName)
         .orderBy('listId')
@@ -73,10 +67,6 @@ export class ListRepository {
       // console.error('Error getAll document: ', e);
       throw new Error(e as string);
     }
-    // TODO fix sort
-    return lists.sort(
-      (a: List, b: List) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return lists;
   }
 }

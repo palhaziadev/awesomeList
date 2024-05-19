@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useAuthContext } from '../../context/useAuthContext';
-import firestore from '@react-native-firebase/firestore';
-import { ListRepository } from '../../repository/ListRepository';
 import { List } from '../../model/List';
 import ListElement from '../../components/List/ListElement';
 import InputField from '../../components/InputField';
 import Button from '../../components/Button';
+import { ListService } from '../../services/ListService';
+import { useSubscribeList } from '../../hooks/useSubscribeLists';
 
 // TODO check database layer how it is recommended to do (next-practice)
-
 const defaultList = {
   users: [],
   createdAt: '',
@@ -20,16 +25,12 @@ const defaultList = {
 
 export default function ListScreen({ navigation }) {
   const { user } = useAuthContext();
-  const repo = new ListRepository();
+  const listService = new ListService();
   const [newList, setNewList] = useState<List>(defaultList);
-  const [loading, setLoading] = useState(true);
-  const [lists, setLists] = useState<List[]>([]);
-
-  //
-  // TODO create service
+  const { isLoading, lists } = useSubscribeList();
 
   const addList = () => {
-    repo.create({
+    listService.addList({
       ...newList,
       createdAt: new Date().toISOString(),
       createdBy: `${user?.uid}`,
@@ -38,33 +39,10 @@ export default function ListScreen({ navigation }) {
   };
 
   const removeList = (listId) => {
-    repo.delete(listId);
+    listService.deleteList(listId);
   };
 
-  useEffect(() => {
-    const subscriber = firestore()
-      .collection('awesomeLists')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot((querySnapshot) => {
-        const lists: List[] = [];
-
-        querySnapshot.forEach((documentSnapshot) => {
-          lists.push({
-            ...(documentSnapshot.data() as List),
-            // TODO delete with docId or use added+generated id by me??
-            listId: documentSnapshot.id,
-            key: documentSnapshot.id,
-          });
-        });
-
-        setLists(lists);
-        setLoading(false);
-      });
-
-    return () => subscriber();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <ActivityIndicator />;
   }
 
@@ -91,6 +69,7 @@ export default function ListScreen({ navigation }) {
         style={styles.list}
         contentContainerStyle={{ gap: 10 }}
         data={lists}
+        ListEmptyComponent={<Text>No list created, create one...</Text>}
         renderItem={({ item }) => (
           <ListElement list={item} remove={removeList}></ListElement>
         )}
