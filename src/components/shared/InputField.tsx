@@ -5,7 +5,7 @@ import {
   TextInputProps,
   View,
 } from 'react-native';
-import { GLOBAL_STYLES } from '../constants/styles';
+import { GLOBAL_STYLES } from '../../constants/styles';
 
 type InputField = {
   value: string;

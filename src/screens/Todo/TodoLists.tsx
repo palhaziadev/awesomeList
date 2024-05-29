@@ -7,26 +7,27 @@ import {
   View,
 } from 'react-native';
 import { useAuthContext } from '../../context/useAuthContext';
-import { List } from '../../model/List';
-import ListElement from '../../components/List/ListElement';
-import InputField from '../../components/InputField';
-import Button from '../../components/Button';
-import { ListService } from '../../services/ListService';
+import { TodoList } from '../../model/Todo';
+import InputField from '../../components/shared/InputField';
+import Button from '../../components/shared/Button';
+import { TodoListService } from '../../services/TodoListService';
 import { useSubscribeList } from '../../hooks/useSubscribeLists';
+import TodoListElement from '../../components/Todo/TodoListElement';
 
 // TODO check database layer how it is recommended to do (next-practice)
 const defaultList = {
   users: [],
+  items: [],
   createdAt: '',
   createdBy: '',
   listId: '0',
   listName: '',
 };
 
-export default function ListScreen({ navigation }) {
+export default function TodoListsScreen({ navigation }) {
   const { user } = useAuthContext();
-  const listService = new ListService();
-  const [newList, setNewList] = useState<List>(defaultList);
+  const listService = new TodoListService();
+  const [newList, setNewList] = useState<TodoList>(defaultList);
   const { isLoading, lists } = useSubscribeList();
 
   const addList = () => {
@@ -40,6 +41,10 @@ export default function ListScreen({ navigation }) {
 
   const removeList = (listId) => {
     listService.deleteList(listId);
+  };
+
+  const handleOnPressListElement = (list: TodoList) => {
+    navigation.navigate('List', { list });
   };
 
   if (isLoading) {
@@ -71,7 +76,11 @@ export default function ListScreen({ navigation }) {
         data={lists}
         ListEmptyComponent={<Text>No list created, create one...</Text>}
         renderItem={({ item }) => (
-          <ListElement list={item} remove={removeList}></ListElement>
+          <TodoListElement
+            list={item}
+            remove={removeList}
+            onPress={() => handleOnPressListElement(item)}
+          ></TodoListElement>
         )}
       />
     </View>

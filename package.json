@@ -26,6 +26,7 @@
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "expo": "^50.0.8",
+    "expo-checkbox": "~2.7.0",
     "expo-dev-client": "~3.3.10",
     "expo-status-bar": "~1.11.1",
     "firebase": "^10.8.1",

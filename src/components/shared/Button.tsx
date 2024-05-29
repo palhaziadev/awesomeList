@@ -5,7 +5,7 @@ import {
   Text,
   TouchableOpacityProps,
 } from 'react-native';
-import { GLOBAL_STYLES } from '../constants/styles';
+import { GLOBAL_STYLES } from '../../constants/styles';
 
 type Button = {
   text: string;
