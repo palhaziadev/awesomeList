@@ -1,5 +1,3 @@
-import { db } from '../../firebase.config';
-import { addDoc, collection, deleteDoc, doc } from 'firebase/firestore';
 import { TodoItem } from '../model/Todo';
 import firestore from '@react-native-firebase/firestore';
 import { TodoList } from '../model/Todo';
@@ -18,9 +16,10 @@ export class TodoItemRepository {
     );
   }
 
+  // TODO check both repository if functions works correctly + when adding set the ID correctly
   async delete(id: string): Promise<void> {
     try {
-      await deleteDoc(doc(db, this.collectionName, id));
+      await firestore().collection(this.collectionName).doc(id).delete();
     } catch (e) {
       throw new Error(e as string);
     }
@@ -29,7 +28,9 @@ export class TodoItemRepository {
   async create(newListItem: TodoItem): Promise<TodoItem> {
     let docRef;
     try {
-      docRef = await addDoc(collection(db, this.collectionName), newListItem);
+      docRef = await firestore()
+        .collection(this.collectionName)
+        .add(newListItem);
     } catch (e) {
       throw new Error(e as string);
     }

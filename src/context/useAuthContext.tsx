@@ -32,6 +32,8 @@ export function useAuthContext() {
   return context;
 }
 
+// TODO if no user pop login screen?
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IUser | null>(null);
 
