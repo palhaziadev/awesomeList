@@ -1,3 +1,4 @@
+import '../firebase.config';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
@@ -11,8 +12,10 @@ import { AuthProvider } from './context/useAuthContext';
 import TodoDetailScreen from './screens/Todo/TodoDetail';
 import TodoListsScreen from './screens/Todo/TodoLists';
 import { TodoList } from './model/Todo';
+import HomeScreen from './screens/Home/Home';
 
 type StackParamList = {
+  Home: undefined;
   Profile: undefined;
   Lists: undefined;
   List: { list: TodoList };
@@ -31,6 +34,7 @@ export default function App() {
     <NavigationContainer>
       <AuthProvider>
         <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Lists" component={TodoListsScreen} />
           <Stack.Screen name="List" component={TodoDetailScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />

@@ -1,4 +1,4 @@
-import { Button, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import useGoogleLogin from '../../services/AuthGoogle';
 import { useAuthContext } from '../../context/useAuthContext';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
@@ -7,7 +7,7 @@ export default function HomeScreen({ navigation }) {
   const { user, setUser } = useAuthContext();
 
   const handleLogin = (user: FirebaseAuthTypes.User): void => {
-    console.log('aaa handle', user);
+    // console.log('aaa handle', user);
     if (!user) return;
     setUser({
       uid: user.uid,
@@ -27,17 +27,27 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <View>
         {user ? (
           <>
-            <Button
-              title="Profile"
-              onPress={() =>
-                navigation.navigate('Profile', { name: 'user name' })
-              }
-            />
-            <Button title="Logout" onPress={() => logout()} />
+            <View style={styles.buttonSection}>
+              <Button
+                title="Lists"
+                onPress={() => navigation.navigate('Lists')}
+              />
+            </View>
+            <View style={styles.buttonSection}>
+              <Button
+                title="Profile"
+                onPress={() =>
+                  navigation.navigate('Profile', { name: 'user name' })
+                }
+              />
+            </View>
+            <View style={styles.buttonSection}>
+              <Button title="Logout" onPress={() => logout()} />
+            </View>
           </>
         ) : null}
       </View>
@@ -62,6 +72,17 @@ export default function HomeScreen({ navigation }) {
           <Text>TODO</Text>
         </>
       </View>
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+  },
+  buttonSection: {
+    height: 40,
+    marginBottom: 10,
+  },
+});

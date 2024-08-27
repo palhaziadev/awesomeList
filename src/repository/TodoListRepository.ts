@@ -1,5 +1,3 @@
-import { db } from '../../firebase.config';
-import { addDoc, collection, deleteDoc, doc } from 'firebase/firestore';
 import { TodoList } from '../model/Todo';
 import firestore, {
   FirebaseFirestoreTypes,
@@ -26,9 +24,20 @@ export class TodoListRepository {
     );
   }
 
+  // TODO try cloud functions delete
+  // https://firebase.google.com/docs/firestore/solutions/delete-collections
   async delete(id: string): Promise<void> {
     try {
-      await deleteDoc(doc(db, this.collectionName, id));
+      (
+        await firestore()
+          .collection(this.collectionName)
+          .doc(id)
+          .collection('items')
+          .get()
+      ).docs.forEach((doc) => {
+        doc.ref.delete();
+      });
+      await firestore().collection(this.collectionName).doc(id).delete();
     } catch (e) {
       throw new Error(e as string);
     }
@@ -37,7 +46,7 @@ export class TodoListRepository {
   async create(newList: TodoList): Promise<TodoList> {
     let docRef;
     try {
-      docRef = await addDoc(collection(db, this.collectionName), newList);
+      docRef = await firestore().collection(this.collectionName).add(newList);
     } catch (e) {
       throw new Error(e as string);
     }

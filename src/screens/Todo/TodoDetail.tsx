@@ -9,6 +9,7 @@ import { useSubscribeListItem } from '../../hooks/useSubscribeListItems';
 import { TodoItemService } from '../../services/TodoItemService';
 import { ListScreenProps } from '../../App';
 import { TodoListService } from '../../services/TodoListService';
+import { TranslationService } from '../../services/TranslationService';
 
 const defaultItem = {
   createdAt: '',
@@ -26,14 +27,19 @@ export default function TodoDetailsScreen({
   const { user } = useAuthContext();
   const itemService = new TodoItemService();
   const listService = new TodoListService();
+  const translationService = new TranslationService();
   const { isLoading, listItems } = useSubscribeListItem(list);
   const [newItem, setNewItem] = useState<TodoItem>(defaultItem);
 
   const addItem = async () => {
+    const translation = await translationService.getTextTranslation(
+      newItem.itemName
+    );
     const addedItem = await itemService.addTodoItem({
       ...newItem,
       createdAt: new Date().toISOString(),
       createdBy: `${user?.uid}`,
+      translation: translation,
     });
     listService.addItem(list, addedItem);
     setNewItem(defaultItem);

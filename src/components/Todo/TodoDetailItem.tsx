@@ -29,6 +29,11 @@ export default function TodoDetailItem({
         <Text style={[styles.text, item.isDone && styles.textInverse]}>
           {item.itemName}
         </Text>
+        {item.translation ? (
+          <Text style={[styles.text, item.isDone && styles.textInverse]}>
+            {item.translation}
+          </Text>
+        ) : null}
       </TouchableOpacity>
       <Button
         text="Remove"

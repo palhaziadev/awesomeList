@@ -14,6 +14,7 @@ import { TodoListService } from '../../services/TodoListService';
 import { useSubscribeList } from '../../hooks/useSubscribeLists';
 import TodoListElement from '../../components/Todo/TodoListElement';
 
+// TODO create interface? and create class for this? new List()?
 // TODO check database layer how it is recommended to do (next-practice)
 const defaultList = {
   users: [],
@@ -53,7 +54,10 @@ export default function TodoListsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileSection}>
+      <View style={styles.buttonSection}>
+        <Button text="Home" onPress={() => navigation.navigate('Home')} />
+      </View>
+      <View style={styles.buttonSection}>
         <Button
           text="Profile"
           onPress={() => navigation.navigate('Profile', { name: 'user name' })}
@@ -95,11 +99,11 @@ const styles = StyleSheet.create({
   list: {
     // margin: 10,
   },
-  profileSection: {
+  buttonSection: {
     height: 40,
+    marginBottom: 10,
   },
   newSection: {
-    marginTop: 10,
     marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
