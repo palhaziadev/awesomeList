@@ -28,7 +28,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": false,
-    "types": ["react-native"],
+    "types": ["react-native", "node"],
     "module": "NodeNext"
   },
   "exclude": [

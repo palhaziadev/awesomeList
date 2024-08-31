@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { ITranslationService } from './ITranslationService';
 
-export class TranslationService {
-  authKey = 'df1cf019-1fb9-48ab-87c4-842c769989c1:fx';
+export class TranslationService implements ITranslationService {
   sourceLang = 'hu';
   targetLang = 'es';
 
