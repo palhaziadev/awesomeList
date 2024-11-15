@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "plugins": [
       "@react-native-google-signin/google-signin",
       "@react-native-firebase/app",
@@ -38,9 +36,7 @@
         "projectId": "70d7bb5a-9662-46d8-8c87-d444480707f1"
       }
     },
-    "owner": "palhaziadev",
-    "sdkVersion": "50.0.0",
-    "entryPoint": ".vscode\\exponentIndex.js"
+    "owner": "palhaziadev"
   },
   "name": "awesomelist"
 }
