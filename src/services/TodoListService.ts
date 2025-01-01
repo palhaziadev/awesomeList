@@ -1,45 +1,37 @@
-import { TodoItem, TodoList } from '../model/Todo';
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import { TodoList } from '../model/Todo';
+import { User } from '../model/User';
 import { TodoListRepository } from '../repository/TodoListRepository';
 
 export class TodoListService {
-  repository = new TodoListRepository();
+  listRepository = new TodoListRepository();
 
-  queryList(): ReturnType<typeof this.repository.queryList> {
-    return this.repository.queryList();
+  queryList(
+    user: User
+  ): FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> {
+    return this.listRepository.queryList(user);
   }
 
-  queryListItems(
-    list: TodoList
-  ): ReturnType<typeof this.repository.queryListItems> {
-    return this.repository.queryListItems(list);
+  async addList({
+    user,
+    list: { items, ...listProps }, // exclude items property from creation
+  }: {
+    user: User;
+    list: TodoList;
+  }): Promise<TodoList> {
+    return this.listRepository.create(user, {
+      ...listProps,
+      createdAt: new Date().toISOString(),
+      createdBy: `${user?.email}`,
+    });
   }
 
-  async getLists(): Promise<TodoList[]> {
-    return this.repository.getAll();
-  }
-
-  async addList(newList: TodoList): Promise<TodoList> {
-    return this.repository.create(newList);
+  async deleteList(user: User, listId: string): Promise<void> {
+    return this.listRepository.delete(user, listId);
   }
 
   async updateList(id: string, props: Partial<TodoList>) {
     // TODO
     // return this.repository.update(id, props);
-  }
-
-  async deleteListItem(listId, itemId) {
-    return this.repository.deleteListItem(listId, itemId);
-  }
-
-  async setItemIsDone(listId, item) {
-    return this.repository.setItemIsDone(listId, item);
-  }
-
-  async deleteList(id: string): Promise<void> {
-    return this.repository.delete(id);
-  }
-
-  async addItem(list: TodoList, item: TodoItem): Promise<void> {
-    return this.repository.addListItem(list, item);
   }
 }

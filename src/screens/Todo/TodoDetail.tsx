@@ -8,8 +8,8 @@ import { useAuthContext } from '../../context/useAuthContext';
 import { useSubscribeListItem } from '../../hooks/useSubscribeListItems';
 import { TodoItemService } from '../../services/TodoItemService';
 import { ListScreenProps } from '../../App';
-import { TodoListService } from '../../services/TodoListService';
 import { TranslationService } from '../../services/TranslationService';
+import { TodoListItemService } from '../../services/TodoListItemService';
 
 const defaultItem = {
   createdAt: '',
@@ -26,35 +26,33 @@ export default function TodoDetailsScreen({
 }: ListScreenProps) {
   const { user } = useAuthContext();
   const itemService = new TodoItemService();
-  const listService = new TodoListService();
+  const listItemService = new TodoListItemService();
   const translationService = new TranslationService();
   const { isLoading, listItems } = useSubscribeListItem(list);
   const [newItem, setNewItem] = useState<TodoItem>(defaultItem);
 
   const addItem = async () => {
+    if (!user) return;
     const translation = await translationService.getTextTranslation(
       newItem.itemName
     );
     const addedItem = await itemService.addTodoItem({
       ...newItem,
       createdAt: new Date().toISOString(),
-      createdBy: `${user?.uid}`,
+      createdBy: `${user?.email}`,
       translation: translation,
     });
-    listService.addItem(list, addedItem);
+    listItemService.addItem({ user, list, addedItem });
     setNewItem(defaultItem);
   };
 
   const removeItem = (itemId) => {
-    listService.deleteListItem(list.listId, itemId);
+    listItemService.deleteListItem({ list, itemId });
   };
 
   const handleIsDone = (item: TodoItem) => {
-    // TODO create 'updatedAt' property
-    listService.setItemIsDone(list.listId, {
-      ...item,
-      createdAt: new Date().toISOString(),
-    });
+    if (!user) return;
+    listItemService.setItemIsDone({ user, list, item });
   };
 
   return (

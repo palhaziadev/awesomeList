@@ -16,8 +16,8 @@ import TodoListElement from '../../components/Todo/TodoListElement';
 
 // TODO create interface? and create class for this? new List()?
 // TODO check database layer how it is recommended to do (next-practice)
-const defaultList = {
-  users: [],
+const defaultList: TodoList = {
+  owner: '',
   items: [],
   createdAt: '',
   createdBy: '',
@@ -32,16 +32,14 @@ export default function TodoListsScreen({ navigation }) {
   const { isLoading, lists } = useSubscribeList();
 
   const addList = () => {
-    listService.addList({
-      ...newList,
-      createdAt: new Date().toISOString(),
-      createdBy: `${user?.uid}`,
-    });
+    if (!user) return;
+    listService.addList({ user, list: newList });
     setNewList(defaultList);
   };
 
   const removeList = (listId) => {
-    listService.deleteList(listId);
+    if (!user) return;
+    listService.deleteList(user, listId);
   };
 
   const handleOnPressListElement = (list: TodoList) => {

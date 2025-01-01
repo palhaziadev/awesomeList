@@ -1,7 +1,6 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
 
 export default function useGoogleLogin(handleLogin) {
   useEffect(() => {
@@ -10,12 +9,6 @@ export default function useGoogleLogin(handleLogin) {
         '203722623000-e1nuqqv0mo5dsd9ga0sofiojrafske9v.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
     });
-  }, []);
-
-  useEffect(() => {
-    getAuth();
-    const subscriber = auth().onAuthStateChanged(handleLogin);
-    return subscriber; // unsubscribe on unmount
   }, []);
 
   const googleSignIn = async (): Promise<FirebaseAuthTypes.UserCredential> => {

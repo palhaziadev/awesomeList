@@ -3,7 +3,7 @@ import { TodoList } from '../../model/Todo';
 import { GLOBAL_STYLES } from '../../constants/styles';
 import Button from '../shared/Button';
 
-type TodoListElement = {
+type TodoListElementProps = {
   list: TodoList;
   remove: (id: string) => void;
   onPress?: () => void;
@@ -13,7 +13,7 @@ export default function TodoListElement({
   list,
   remove,
   onPress,
-}: TodoListElement) {
+}: TodoListElementProps) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.textContainer} onPress={onPress}>

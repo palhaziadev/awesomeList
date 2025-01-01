@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { TodoListService } from '../services/TodoListService';
+import { TodoListItemService } from '../services/TodoListItemService';
 import { TodoItem, TodoList } from '../model/Todo';
 
 export function useSubscribeListItem(list: TodoList) {
-  const todoListService = new TodoListService();
+  const todoListItemService = new TodoListItemService();
   const [listItems, setListItems] = useState<TodoItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const subscriber = todoListService
+    const subscriber = todoListItemService
       .queryListItems(list)
       .onSnapshot((querySnapshot) => {
         const listItems: TodoItem[] = [];

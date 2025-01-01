@@ -2,19 +2,33 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import useGoogleLogin from '../../services/AuthGoogle';
 import { useAuthContext } from '../../context/useAuthContext';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { useState } from 'react';
+import { UserService } from '../../services/UserService';
+import { User } from '../../model/User';
+import React from 'react';
 
 export default function HomeScreen({ navigation }) {
   const { user, setUser } = useAuthContext();
+  const [userData, setUserData] = useState<User | undefined>();
+  const userService = new UserService();
 
-  const handleLogin = (user: FirebaseAuthTypes.User): void => {
-    // console.log('aaa handle', user);
+  const handleLogin = async (user: FirebaseAuthTypes.User): Promise<void> => {
     if (!user) return;
-    setUser({
-      uid: user.uid,
-      displayName: `${user.displayName}`,
-      email: `${user.email}`,
-      photoURL: `${user.photoURL}`,
-    });
+    if (user.email) {
+      const userDoc = await userService.getUser(user.email).get();
+      const userData = userDoc?.docs?.[0]?.data() as User;
+      if (userData) {
+        setUser({
+          ...userData,
+          userId: userDoc?.docs?.[0].id,
+        });
+      } else {
+        const createdUser = await userService.createUser(user);
+        if (createdUser) {
+          setUser(createdUser);
+        }
+      }
+    }
   };
 
   const { googleSignIn, googleLogOut } = useGoogleLogin(handleLogin);
@@ -70,6 +84,11 @@ export default function HomeScreen({ navigation }) {
       <View>
         <>
           <Text>TODO</Text>
+        </>
+      </View>
+      <View>
+        <>
+          <Text>{JSON.stringify(userData)}</Text>
         </>
       </View>
     </View>
